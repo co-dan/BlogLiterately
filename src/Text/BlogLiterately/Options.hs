@@ -36,6 +36,7 @@ module Text.BlogLiterately.Options
     , password
     , title
     , file
+    , readStdin
     , format
     , postid
     , page
@@ -60,6 +61,7 @@ module Text.BlogLiterately.Options
     , password'
     , title'
     , file'
+    , readStdin'
     , format'
     , postid'
     , page'
@@ -100,6 +102,8 @@ data BlogLiterately = BlogLiterately
   , _password       :: Maybe String        -- ^ Blog password (omit to be interactively prompted)
   , _title          :: Maybe String        -- ^ Post title
   , _file           :: Maybe String        -- ^ File to post
+  , _readStdin      :: Maybe Bool          -- ^ Whether to read input from stdin
+                                           --   (ignores the file argument)
   , _format         :: Maybe String        -- ^ Format of the file
                                            --   (currently supported:
                                            --   markdown, rst)
@@ -140,6 +144,7 @@ instance Monoid BlogLiterately where
     , _password       = Nothing
     , _title          = Nothing
     , _file           = Nothing
+    , _readStdin      = Nothing
     , _format         = Nothing
     , _postid         = Nothing
     , _page           = Nothing
@@ -166,6 +171,7 @@ instance Monoid BlogLiterately where
     , _password       = combine _password
     , _title          = combine _title
     , _file           = combine _file
+    , _readStdin      = combine _readStdin
     , _format         = combine _format
     , _postid         = combine _postid
     , _page           = combine _page
@@ -197,6 +203,7 @@ user'           = fromMaybe ""    . view user
 password'       = fromMaybe ""    . view password
 title'          = fromMaybe ""    . view title
 file'           = fromMaybe ""    . view file
+readStdin'      = fromMaybe False . view readStdin
 format'         = fromMaybe ""    . view format
 postid'         = fromMaybe ""    . view postid
 page'           = fromMaybe False . view page
@@ -250,6 +257,10 @@ blOpts = BlogLiterately
                   &= name "publish" &= explicit
      , _htmlOnly = def &= help "don't upload anything; output HTML to stdout"
                   &= name "html-only" &= name "h" &= explicit
+     , _readStdin  = def
+       &= help "read the input from stdin; ignore the file argument if present"
+       &= name "stdin"
+       &= explicit
      , _categories = def
        &= explicit
        &= name "category" &= name "C"

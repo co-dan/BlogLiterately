@@ -38,9 +38,9 @@ module Text.BlogLiterately.Run
 import           Control.Lens                  (set, use, (%=), (&), (.=), (.~),
                                                 (^.))
 import           System.Console.CmdArgs        (cmdArgs)
-import qualified System.IO.UTF8                as U (readFile)
+import qualified System.IO.UTF8                as U (getContents, readFile)
 
-import           Text.BlogLiterately.Options   (blOpts, file')
+import           Text.BlogLiterately.Options   (blOpts, file', readStdin')
 import           Text.BlogLiterately.Post      (postIt)
 import           Text.BlogLiterately.Transform (Transform, standardTransforms,
                                                 xformDoc)
@@ -61,6 +61,8 @@ blogLiteratelyWith = blogLiteratelyCustom . (standardTransforms ++)
 blogLiteratelyCustom :: [Transform] -> IO ()
 blogLiteratelyCustom ts =
       cmdArgs blOpts
-  >>= \bl -> U.readFile (file' bl)
+  >>= \bl -> (if readStdin' bl
+              then U.getContents
+              else U.readFile (file' bl))
   >>= xformDoc bl ts
   >>= uncurry postIt

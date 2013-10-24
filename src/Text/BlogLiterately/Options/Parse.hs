@@ -68,6 +68,7 @@ parseBLOption =
   <|> parseField page         "page"          parseBool
   <|> parseField publish      "publish"       parseBool
   <|> parseField htmlOnly     "html-only"     parseBool
+  <|> parseField readStdin    "stdin"         parseBool
   <|> parseField xtra         "xtras"         parseStrList
 
 str = stringLiteral haskell <|> many (noneOf " \t\n\r,\"[]")
